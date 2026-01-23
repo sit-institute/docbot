@@ -35,13 +35,6 @@ DocBot ist ein VS Code MCP-basiertes System zur Verwaltung und Verarbeitung von 
 - Können Scripts aufrufen (z.B. Python für spezielle Analysen)
 - Kombinierbar für komplexe Workflows
 
-### Kontext-Management (Forgetful MCP)
-- Persistenter Speicher für wichtige Informationen über Konversationen hinweg
-- Langzeit-Gedächtnis für Projektdetails, Entscheidungen und Kontexte
-- Ermöglicht Kontinuität bei der Arbeit mit mehreren Projekten
-- Nützlich für wiederkehrende Workflows und projektübergreifendes Wissen
-- Bietet dedizierte Skills zum Speichern und Abrufen von Kontext-Informationen
-
 ## Dokumenten-Quellen
 
 Projektdokumente können sich an verschiedenen Speicherorten befinden:

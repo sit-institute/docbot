@@ -2,16 +2,8 @@
 .env
 
 # Local RAG Database
-.rag/
 lancedb/
 models/
 
-# OS
-.DS_Store
-Thumbs.db
-
-# IDE
-.vscode/settings.json
-.idea/
-
 documents/
+!documents/.gitkeep

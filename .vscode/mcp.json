@@ -9,13 +9,6 @@
             "env": {
                 "BASE_DIR": "${workspaceFolder}/documents"
             }
-        },
-        "forgetful": {
-            "type": "stdio",
-            "command": "uvx",
-            "args": [
-                "forgetful-ai"
-            ]
-        },
+        }
     }
 }
