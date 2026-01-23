@@ -2,7 +2,7 @@
     "image": "mcr.microsoft.com/devcontainers/python:2-3.12-bookworm",
     "features": {
         "ghcr.io/devcontainers-extra/features/uv:1": {},
-        "ghcr.io/devcontainers/features/node:1": {}
+        "ghcr.io/devcontainers/features/node:1": {},
     },
     "runArgs": [
         "--env-file",
