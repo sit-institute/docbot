@@ -11,9 +11,9 @@
             }
         },
         "perplexity": {
-            "type": "stdio",
-            "command": "pnpx",
+            "command": "npx",
             "args": [
+                "-y",
                 "@perplexity-ai/mcp-server"
             ],
             "env": {
