@@ -321,6 +321,7 @@ topics: [Budget, Milestone-1, Publikation]
 - Konsistente Ordner-Struktur über alle Projekte
 - Wichtige Dokumente als Markdown oder PDF
 - Originaldokumente (z.B. Excel) zusätzlich zu extrahierten Infos behalten
+- **Neue Dokumente indexieren**: Wenn der Nutzer neue Dokumente (PDF, DOCX, TXT, MD) in den `documents/` Ordner gelegt hat, sollte die KI proaktiv vorschlagen, diese mit dem Local RAG System zu indexieren. Dies ermöglicht semantische Suche und Metadaten-Extraktion durch die Agenten.
 
 ### Arbeiten mit Agenten
 - Klare, spezifische Anfragen stellen
