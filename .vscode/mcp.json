@@ -9,6 +9,24 @@
             "env": {
                 "BASE_DIR": "${workspaceFolder}/documents"
             }
+        },
+        "perplexity": {
+            "type": "stdio",
+            "command": "pnpx",
+            "args": [
+                "@perplexity-ai/mcp-server"
+            ],
+            "env": {
+                "PERPLEXITY_API_KEY": "${input:perplexity-key}"
+            }
+        },
+    },
+    "inputs": [
+        {
+            "id": "perplexity-key",
+            "type": "promptString",
+            "description": "Please provide your Perplexity API key.",
+            "password": true
         }
-    }
+    ]
 }
