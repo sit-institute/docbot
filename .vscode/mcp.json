@@ -1,0 +1,20 @@
+{
+    "servers": {
+        "local-rag": {
+            "command": "pnpx",
+            "args": [
+                "mcp-local-rag"
+            ],
+            "env": {
+                "BASE_DIR": "${workspaceFolder}/documents"
+            }
+        },
+        "forgetful": {
+            "type": "stdio",
+            "command": "uvx",
+            "args": [
+                "forgetful-ai"
+            ]
+        },
+    }
+}

@@ -1,0 +1,22 @@
+{
+    "image": "mcr.microsoft.com/devcontainers/python:2-3.12-bookworm",
+    "features": {
+        "ghcr.io/devcontainers-extra/features/uv:1": {},
+        "ghcr.io/devcontainers/features/node:1": {}
+    },
+    "runArgs": [
+        "--env-file",
+        "${localWorkspaceFolder}/.env"
+    ],
+    "customizations": {
+        "vscode": {
+            "extensions": [
+                "tomoki1207.pdf",
+                "mermaidchart.vscode-mermaid-chart",
+                "yzhang.markdown-all-in-one",
+                "GitHub.copilot-chat",
+                "eamodio.gitlens"
+            ]
+        }
+    }
+}
