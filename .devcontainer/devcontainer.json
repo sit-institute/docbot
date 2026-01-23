@@ -1,10 +1,11 @@
 {
-    "image": "mcr.microsoft.com/devcontainers/python:2-3.12-bookworm",
+    "image": "mcr.microsoft.com/devcontainers/javascript-node:22",
     "features": {
-        "ghcr.io/devcontainers-extra/features/uv:1": {},
-        "ghcr.io/devcontainers/features/node:1": {},
+        // "ghcr.io/devcontainers-extra/features/uv:1": {},
+        // "ghcr.io/devcontainers/features/node:1": {},
     },
     "runArgs": [
+        "--network=host",
         "--env-file",
         "${localWorkspaceFolder}/.env"
     ],

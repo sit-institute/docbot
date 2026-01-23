@@ -1,8 +1,9 @@
 {
     "servers": {
         "local-rag": {
-            "command": "pnpx",
+            "command": "npx",
             "args": [
+                "-y",
                 "mcp-local-rag"
             ],
             "env": {
