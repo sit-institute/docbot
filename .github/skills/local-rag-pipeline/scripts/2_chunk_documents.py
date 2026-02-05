@@ -90,7 +90,7 @@ def chunk_documents(parsed_dir: str, output_dir: str, max_tokens: int = 512):
     # Initialize chunker
     print(f"Initializing HybridChunker (max_tokens={max_tokens})...")
     chunker = HybridChunker(
-        max_tokens=max_tokens, merge_list_items=True, tokenizer="cl100k_base"
+        max_tokens=max_tokens, merge_list_items=True, tokenizer="gpt2"
     )
 
     # Find all .pkl files

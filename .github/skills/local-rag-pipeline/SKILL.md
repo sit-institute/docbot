@@ -29,6 +29,71 @@ Query → Embedding → Vector Search (top-20) → Reranking (GPU) → Top-5 Res
                                                           headings, bbox
 ```
 
+## 📁 Directory Structure
+
+**All pipeline artifacts are stored under `.rag/` to keep the project root clean:**
+
+```
+.rag/
+├── parsed/         # Step 1: Docling parsed documents (.pkl)
+├── chunks/         # Step 2: Hierarchical chunks with metadata (.json)
+├── embeddings/     # Step 3: Vector embeddings (.npz)
+└── chromadb/       # Step 4: ChromaDB persistent storage
+```
+
+**Add `.rag/` to `.gitignore`** to avoid committing large binary files:
+```bash
+echo ".rag/" >> .gitignore
+```
+
+**Storage Requirements (approximate):**
+- Parsed documents: ~5-10% of PDF size
+- Chunks: ~20-30% of PDF size (JSON with metadata)
+- Embeddings: ~500 bytes/chunk (768-dim float32)
+- ChromaDB: ~800 bytes/chunk (embeddings + metadata + SQLite overhead)
+
+**Example for 100 PDFs (50 pages each, ~50MB total):**
+- `.rag/parsed/`: ~5MB
+- `.rag/chunks/`: ~15MB
+- `.rag/embeddings/`: ~25MB
+- `.rag/chromadb/`: ~40MB
+- **Total: ~85MB**
+
+## 🏷️ Collection Naming
+
+**CRITICAL: There is NO default collection name. Users MUST explicitly specify a collection name.**
+
+**When to ask the user for a collection name:**
+- Before running `4_index_to_chromadb.py` (indexing)
+- Before running `5_search_documents.py` (searching)
+- Before running `6_collection_manager.py` with `--info` or `--delete`
+
+**Naming conventions:**
+- Use descriptive, project-specific names: `research_2025`, `legal_contracts`, `technical_docs`
+- Avoid generic names like `docs`, `documents`, `data`
+- Use underscores for multi-word names: `project_reports_2025`
+- Keep names lowercase for consistency
+
+**Example workflow:**
+```bash
+# WRONG: No collection specified
+python scripts/4_index_to_chromadb.py .rag/embeddings/ .rag/chromadb/
+# Error: --collection is required
+
+# CORRECT: Ask user first, then specify collection
+python scripts/4_index_to_chromadb.py .rag/embeddings/ .rag/chromadb/ --collection vw_reports_2025
+```
+
+**Multiple collections in same ChromaDB:**
+```bash
+# Different document types can share the same .rag/chromadb/ directory
+python scripts/4_index_to_chromadb.py .rag/embeddings/vw/ .rag/chromadb/ --collection vw_reports
+python scripts/4_index_to_chromadb.py .rag/embeddings/bmw/ .rag/chromadb/ --collection bmw_reports
+
+# List all collections
+python scripts/6_collection_manager.py .rag/chromadb/ --list
+```
+
 ## ⚠️ Concurrency & Performance Model
 
 **This pipeline is designed for SEQUENTIAL execution:**
@@ -44,23 +109,23 @@ Query → Embedding → Vector Search (top-20) → Reranking (GPU) → Top-5 Res
 **✅ SAFE - Same Pipeline, Different Collections:**
 ```bash
 # Terminal 1: Index legal documents
-python 4_index_to_chromadb.py ./embeddings/legal/ ./chroma_db/ --collection legal_docs
+python 4_index_to_chromadb.py .rag/embeddings/legal/ .rag/chromadb/ --collection legal_docs
 
 # Terminal 2: Index technical documents (different collection)
-python 4_index_to_chromadb.py ./embeddings/tech/ ./chroma_db/ --collection tech_docs
+python 4_index_to_chromadb.py .rag/embeddings/tech/ .rag/chromadb/ --collection tech_docs
 ```
 
 **✅ SAFE - Process All Documents in One Batch:**
 ```bash
 # Put all PDFs in one directory - scripts handle batching internally
-python 1_parse_documents.py ./all_pdfs/ ./parsed_docs/
+python 1_parse_documents.py documents/ .rag/parsed/
 ```
 
 **❌ UNSAFE - Multiple Instances, Same Collection:**
 ```bash
 # DON'T DO THIS - causes SQLite lock errors and data corruption
-python 4_index_to_chromadb.py ./batch1/ ./chroma_db/ --collection docs &
-python 4_index_to_chromadb.py ./batch2/ ./chroma_db/ --collection docs &
+python 4_index_to_chromadb.py .rag/embeddings/batch1/ .rag/chromadb/ --collection docs &
+python 4_index_to_chromadb.py .rag/embeddings/batch2/ .rag/chromadb/ --collection docs &
 ```
 
 ### Performance Optimization Tips
@@ -69,18 +134,18 @@ python 4_index_to_chromadb.py ./batch2/ ./chroma_db/ --collection docs &
 
 1. **Increase Embedding Batch Size** (GPU memory permitting):
    ```bash
-   python 3_generate_embeddings.py ./chunks/ ./embeddings/ --batch-size 64
+   python 3_generate_embeddings.py .rag/chunks/ .rag/embeddings/ --batch-size 64
    # Default: 32, increase to 64-128 for better GPU utilization
    ```
 
 2. **Process All Documents Together** (internal batching is optimized):
    ```bash
    # ✅ Better: One run with all files
-   python 1_parse_documents.py ./all_100_pdfs/ ./parsed/
+   python 1_parse_documents.py documents/ .rag/parsed/
    
    # ❌ Slower: Multiple runs
-   python 1_parse_documents.py ./batch1/ ./parsed/ && \
-   python 1_parse_documents.py ./batch2/ ./parsed/
+   python 1_parse_documents.py documents/batch1/ .rag/parsed/ && \
+   python 1_parse_documents.py documents/batch2/ .rag/parsed/
    ```
 
 3. **Monitor GPU Usage**:
@@ -97,16 +162,19 @@ python 4_index_to_chromadb.py ./batch2/ ./chroma_db/ --collection docs &
 ## Workflow Decision Tree
 
 **For indexing documents:**
-1. Run `1_parse_documents.py` → Parse PDFs with Docling
-2. Run `2_chunk_documents.py` → Create chunks with metadata
-3. Run `3_generate_embeddings.py` → Generate embeddings (GPU)
-4. Run `4_index_to_chromadb.py` → Store in ChromaDB
+1. Run `1_parse_documents.py documents/ .rag/parsed/` → Parse PDFs with Docling
+2. Run `2_chunk_documents.py .rag/parsed/ .rag/chunks/` → Create chunks with metadata
+3. Run `3_generate_embeddings.py .rag/chunks/ .rag/embeddings/` → Generate embeddings (GPU)
+4. **ASK USER for collection name**, then run:
+   `4_index_to_chromadb.py .rag/embeddings/ .rag/chromadb/ --collection <NAME>` → Store in ChromaDB
 
 **For searching documents:**
-1. Run `5_search_documents.py` → Two-stage retrieval with reranking
+1. **ASK USER for collection name**, then run:
+   `5_search_documents.py .rag/chromadb/ "your query" --collection <NAME>` → Two-stage retrieval with reranking
 
 **For managing collections:**
-1. Use `6_collection_manager.py` → List, delete, or inspect collections
+1. Use `6_collection_manager.py .rag/chromadb/ --list` → List all collections
+2. **ASK USER for collection name** before `--info` or `--delete` operations
 
 ## Core Scripts
 
@@ -128,8 +196,8 @@ python scripts/1_parse_documents.py <input_dir> <output_dir>
 
 **Example:**
 ```bash
-python scripts/1_parse_documents.py ./my_pdfs/ ./parsed_docs/
-# Creates: ./parsed_docs/document1.pkl, ./parsed_docs/document2.pkl, etc.
+python scripts/1_parse_documents.py documents/ .rag/parsed/
+# Creates: .rag/parsed/document1.pkl, .rag/parsed/document2.pkl, etc.
 ```
 
 ### 2. Document Chunking (`2_chunk_documents.py`)
@@ -194,16 +262,19 @@ Store embeddings and metadata in ChromaDB collections.
 python scripts/4_index_to_chromadb.py <embeddings_dir> <chroma_db_path> --collection <name>
 ```
 
+**⚠️ REQUIRED: `--collection <name>` must be explicitly specified. No default exists.**
+
 **Features:**
 - Persistent local storage (SQLite + vectors)
 - Collection-based organization
 - Metadata filtering support
 - Automatic ID generation
 
-**Example:**
+**Example (always ask user for collection name first):**
 ```bash
-python scripts/4_index_to_chromadb.py ./embeddings/ ./chroma_db/ --collection legal_docs
-# Creates collection "legal_docs" in ./chroma_db/
+# User specifies: "vw_reports_2025"
+python scripts/4_index_to_chromadb.py .rag/embeddings/ .rag/chromadb/ --collection vw_reports_2025
+# Creates collection "vw_reports_2025" in .rag/chromadb/
 ```
 
 ### 5. Document Search (`5_search_documents.py`)
@@ -214,6 +285,10 @@ Two-stage retrieval: vector search + cross-encoder reranking.
 ```bash
 python scripts/5_search_documents.py <chroma_db_path> "<query>" --collection <name> [--top-k 5] [--rerank-candidates 20]
 ```
+
+**⚠️ REQUIRED: `--collection <name>` must be explicitly specified. No default exists.**
+
+**Before running: Ask user which collection to search in.**
 
 **Process:**
 1. **Stage 1**: Vector search retrieves top-20 candidates (fast, ~10-50ms)
@@ -246,31 +321,46 @@ Manage ChromaDB collections.
 **Usage:**
 ```bash
 # List all collections
-python scripts/6_collection_manager.py <chroma_db_path> --list
+python scripts/6_collection_manager.py .rag/chromadb/ --list
 
 # Get collection info
-python scripts/6_collection_manager.py <chroma_db_path> --info <collection_name>
+python scripts/6_collection_manager.py .rag/chromadb/ --info <collection_name>
 
 # Delete collection
-python scripts/6_collection_manager.py <chroma_db_path> --delete <collection_name>
+python scripts/6_collection_manager.py .rag/chromadb/ --delete <collection_name>
 ```
 
 ## Setup and Installation
 
-**Step 1: Install dependencies**
+**Step 1: Verify setup (quick check)**
 ```bash
-pip install -r scripts/requirements.txt --break-system-packages
+python scripts/setup_check.py --quick
 ```
 
-**Step 2: Verify GPU setup**
+**Step 2: Install dependencies (if needed)**
 ```bash
-python scripts/setup_check.py
+python scripts/setup_check.py --install
 ```
 
-**Output shows:**
+**Full verification with dependency installation:**
+```bash
+python scripts/setup_check.py --full
+```
+
+**Exit codes for CI/CD:**
+- `0` = All checks passed
+- `1` = Some dependencies or directories missing
+
+**Check directories only:**
+```bash
+python scripts/setup_check.py --dirs-only
+```
+
+**Setup check output shows:**
 - CUDA availability
 - GPU device info
 - Installed library versions
+- Directory structure
 - Model download locations
 
 ## Performance Expectations
