@@ -239,10 +239,8 @@ GPU-accelerated batch embedding generation with sentence-transformers.
 python scripts/3_generate_embeddings.py <chunks_dir> <output_dir> [--model BAAI/bge-base-en-v1.5] [--batch-size 32]
 ```
 
-**Model Options:**
-- `all-MiniLM-L6-v2`: 384 dim, fast (~20-50ms/chunk)
-- `BAAI/bge-base-en-v1.5`: 768 dim, better quality (default)
-- `nomic-embed-text`: 768 dim, long context support
+**Model (default: all-MiniLM-L6-v2):**
+- `sentence-transformers/all-MiniLM-L6-v2`: 384 dim, fast (~20-50ms/chunk), CPU-friendly
 
 **Output:** NPZ files containing:
 - `embeddings`: NumPy array of vectors
@@ -477,5 +475,4 @@ embeddings = embedder.encode(
 
 See `references/` for detailed guides:
 - **metadata_schema.md**: Complete metadata structure and field descriptions
-- **model_comparison.md**: Embedding and reranking model benchmarks
 - **chromadb_api.md**: Full ChromaDB API reference and examples

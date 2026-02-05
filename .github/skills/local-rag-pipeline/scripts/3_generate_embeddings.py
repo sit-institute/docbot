@@ -119,8 +119,8 @@ def main():
     parser.add_argument("output_dir", help="Directory to save embedding NPZ files")
     parser.add_argument(
         "--model",
-        default="BAAI/bge-base-en-v1.5",
-        help="sentence-transformers model name (default: BAAI/bge-base-en-v1.5)",
+        default="sentence-transformers/all-MiniLM-L6-v2",
+        help="sentence-transformers model name (default: sentence-transformers/all-MiniLM-L6-v2)",
     )
     parser.add_argument(
         "--batch-size",
