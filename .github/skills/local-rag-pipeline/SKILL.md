@@ -39,7 +39,7 @@ Query → Embedding → Vector Search (top-20) → Reranking (GPU) → Top-5 Res
 ### Index Documents
 
 ```bash
-# 1. Parse
+# 1. Parse (creates .rag/parsed/<doc>/docling.pkl, contents.md, tables/*.csv)
 python scripts/1_parse_documents.py documents/ .rag/parsed/
 
 # 2. Chunk
@@ -62,14 +62,41 @@ python scripts/5_search_documents.py .rag/chromadb/ "your query" --collection <N
 ## Directory Structure
 
 All artifacts under `.rag/`:
-- `.rag/parsed/` - Docling parsed documents
+- `.rag/parsed/` - Docling parsed documents (.pkl) + Markdown/CSV exports
 - `.rag/chunks/` - Hierarchical chunks with metadata
 - `.rag/embeddings/` - Vector embeddings
 - `.rag/chromadb/` - ChromaDB persistent storage
 
+### `.rag/parsed/` Contents
+
+Each document gets its own subdirectory:
+
+```
+.rag/parsed/
+├── 2025.11_VW/
+│   ├── docling.pkl          # DoclingDocument (for chunking pipeline)
+│   ├── contents.md          # Full document as Markdown (for LLMs)
+│   └── tables/
+│       ├── page-3-table-1.csv
+│       └── page-4-table-2.csv
+```
+
+**Why Markdown + CSV Exports?**
+
+The `.md` and `.csv` files enable LLMs to:
+- Generate summaries without the RAG pipeline
+- Access full document context
+- Process tables as structured data
+
+**Example:**
+```bash
+python scripts/1_parse_documents.py documents/ .rag/parsed/
+# Creates per-document directories with .pkl, .md, and tables/*.csv
+```
+
 ## Collection Naming
 
-**CRITICAL:** No default collection name. Users MUST specify one.
+**CRITICAL:** No default collection name. Users MUST specify one. You may suggest a name based on project/document context.
 
 **When to ask user:**
 - Before `4_index_to_chromadb.py` (indexing)

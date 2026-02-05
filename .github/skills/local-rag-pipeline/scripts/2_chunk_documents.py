@@ -93,8 +93,8 @@ def chunk_documents(parsed_dir: str, output_dir: str, max_tokens: int = 512):
         max_tokens=max_tokens, merge_list_items=True, tokenizer="gpt2"
     )
 
-    # Find all .pkl files
-    pkl_files = list(parsed_path.glob("*.pkl"))
+    # Find all .pkl files (recursively)
+    pkl_files = list(parsed_path.glob("**/*.pkl"))
 
     if not pkl_files:
         print(f"No .pkl files found in {parsed_dir}")
@@ -121,8 +121,9 @@ def chunk_documents(parsed_dir: str, output_dir: str, max_tokens: int = 512):
 
                 chunk_data.append({"text": chunk.text, "metadata": metadata})
 
-            # Save chunks as JSON
-            output_file = output_path / f"{pkl_file.stem}_chunks.json"
+            # Save chunks as JSON (use parent directory name for unique filenames)
+            doc_name = pkl_file.parent.name
+            output_file = output_path / f"{doc_name}_chunks.json"
             with open(output_file, "w", encoding="utf-8") as f:
                 json.dump(chunk_data, f, indent=2, ensure_ascii=False)
 
