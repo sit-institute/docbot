@@ -12,37 +12,19 @@ DocBot ist ein VS Code MCP-basiertes System zur Verwaltung und Verarbeitung von 
 
 ## 🚀 Quick Start
 
-### 1. Installation
+### VS Code Copilot
 
-```bash
-# Repository klonen
-git clone https://github.com/sit-institute/docbot.git
-cd docbot
-
-# Umgebungsvariablen konfigurieren
-cp .env.example .env
-```
-
-### 2. VS Code Copilot konfigurieren
-
-Der **Project Visitor Agent** ist bereits installiert und wird automatisch von VS Code erkannt.
+Der **Project Visitor Agent** ist installiert und wird automatisch von VS Code erkannt.
 
 1. Öffne VS Code in diesem Repository
 2. Öffne Copilot Chat (Cmd/Ctrl + Shift + I)
 3. Wähle `@project-visitor` aus der Agents-Dropdown-Liste
 
-### 3. Erstes Projekt indexieren
+### Erstes Projekt indexieren
 
 ```
 @project-visitor Indexiere Projekt ki-gesundheit-2024
 ```
-
-Der Agent wird:
-- Dokumente in `documents/ki-gesundheit-2024/` scannen
-- PDFs, DOCX, TXT, MD in Local RAG ingestieren
-- Metadaten extrahieren (Titel, Budget, Team, etc.)
-- `projects/ki-gesundheit-2024.md` erstellen
-- Portfolio-Übersicht aktualisieren
 
 ## 📁 Repository-Struktur
 
@@ -52,7 +34,7 @@ docbot/
 │   ├── agents/                        # Custom VS Code Copilot Agents
 │   │   └── project-visitor.agent.md  # Project Visitor Agent
 │   └── skills/                        # Agent Skills
-│       ├── mcp-local-rag/             # Local RAG Skills
+│       ├── local-rag-pipeline/        # Local RAG Pipeline (siehe SKILL.md)
 │       └── project-visitor/           # Project Visitor Skills
 │
 ├── projects/                          # Projekt-Index-Dateien
@@ -79,10 +61,6 @@ docbot/
 │   ├── partner.md
 │   └── foerderer.md
 │
-├── .rag/                             # Local RAG Datenbank (automatisch)
-│   ├── chromadb/                     # ChromaDB Vektordatenbank
-│   └── models/                        # Embedding-Modelle (automatisch geladen)
-│
 └── AGENTS.md                         # Vollständige Dokumentation
 ```
 
@@ -100,7 +78,6 @@ docbot/
 ```
 
 **Features**:
-- ✅ **Neues local-rag-pipeline Skill** (ChromaDB + Docling + GPU-Embeddings)
 - ✅ Automatische Dokument-Ingestion in Local RAG
 - ✅ Intelligente Metadaten-Extraktion
 - ✅ Projekt-Index-Erstellung
@@ -110,7 +87,6 @@ docbot/
 **Handoffs**:
 - → Summarizer: Zusammenfassungen erstellen
 - → Reporter: Statusberichte generieren
-- → local-rag-pipeline: Semantische Dokumentsuche (GPU-beschleunigt)
 
 ### Weitere Agents (in Planung)
 
@@ -120,110 +96,15 @@ docbot/
 - **Generator Agent**: Neue Dokumente (Anträge, Protokolle)
 - **Analyzer Agent**: Budget-Analysen, Risiken, Timelines
 
-## 🛠️ Technologie
-
-### Local RAG Pipeline (Eigenentwicklung)
-
-**Semantische Dokumentensuche** ohne Cloud - vollständig lokal:
-
-**Komponenten:**
-- **Docling**: PDF/DOCX Parsing mit Layout-Analyse
-- **HybridChunker**: Hierarchische, token-aware Chunking
-- **ChromaDB**: Lokale Vektordatenbank
-- **sentence-transformers**: GPU-beschleunigte Embeddings (BGE Modelle)
-- **BGE Reranker**: Cross-Encoder für verbesserte Retrieval-Qualität
-
-**Pipeline:**
-```
-PDF/DOCX → Docling → HybridChunker → Embeddings → ChromaDB
-```
-
-**Unterstützte Formate**:
-- ✅ PDF, DOCX, TXT, Markdown
-- ❌ Excel, PowerPoint (manuelle Konvertierung nötig)
-
-**Installation:**
-```bash
-uv pip install -r .github/skills/local-rag-pipeline/scripts/requirements.txt
-```
-
-**Verwendung:**
-```bash
-# 1. PDFs parsen
-python .github/skills/local-rag-pipeline/scripts/1_parse_documents.py ./input/ ./parsed/
-
-# 2. Chunks erstellen
-python .github/skills/local-rag-pipeline/scripts/2_chunk_documents.py ./parsed/ ./chunks/
-
-# 3. Embeddings generieren
-python .github/skills/local-rag-pipeline/scripts/3_generate_embeddings.py ./chunks/ ./embeddings/
-
-# 4. In ChromaDB indexieren
-python .github/skills/local-rag-pipeline/scripts/4_index_to_chromadb.py ./embeddings/ ./chroma_db/ --collection mein_projekt
-
-# 5. Semantische Suche
-python .github/skills/local-rag-pipeline/scripts/5_search_documents.py ./chroma_db/ "Meine Frage" --collection mein_projekt
-```
-
-**Hinweis:**
-- ⚠️ Pipeline läuft **sequenziell** (ChromaDB SQLite Backend)
-- Mehrere Collections gleichzeitig möglich (verschiedene Collections)
-- Batch-Size 64 für GPU-Optimierung (50-100 große PDFs)
-PDF/DOCX → Docling → HybridChunker → Embeddings → ChromaDB
-```
-
-**Unterstützte Formate**:
-- ✅ PDF, DOCX, TXT, Markdown
-- ❌ Excel, PowerPoint (manuelle Konvertierung nötig)
-
-**Installation:**
-```bash
-uv pip install -r .github/skills/local-rag-pipeline/scripts/requirements.txt
-```
-
-**Verwendung:**
-```bash
-# 1. PDFs parsen
-python .github/skills/local-rag-pipeline/scripts/1_parse_documents.py ./input/ ./parsed/
-
-# 2. Chunks erstellen
-python .github/skills/local-rag-pipeline/scripts/2_chunk_documents.py ./parsed/ ./chunks/
-
-# 3. Embeddings generieren
-python .github/skills/local-rag-pipeline/scripts/3_generate_embeddings.py ./chunks/ ./embeddings/
-
-# 4. In ChromaDB indexieren
-python .github/skills/local-rag-pipeline/scripts/4_index_to_chromadb.py ./embeddings/ ./chroma_db/ --collection mein_projekt
-
-# 5. Semantische Suche
-python .github/skills/local-rag-pipeline/scripts/5_search_documents.py ./chroma_db/ "Meine Frage" --collection mein_projekt
-```
-
-**Hinweis:**
-- ⚠️ Pipeline läuft **sequenziell** (ChromaDB SQLite Backend)
-- Mehrere Collections gleichzeitig möglich (verschiedene Collections)
-- Batch-Size 64 für GPU-Optimierung (50-100 große PDFs)
-
-### VS Code Copilot
-
-**Custom Agents** für spezialisierte Aufgaben:
-- Definition via `.agent.md` Dateien
-- Skills für detaillierte Anweisungen
-- Handoffs zwischen Agents
-- Tool-Integration (Local RAG, File Ops, etc.)
-
 ## 📖 Dokumentation
 
 ### Für Nutzer
 - **AGENTS.md**: Vollständige Projekt-Dokumentation
-- **.github/README.md**: Custom Agents & Skills Übersicht
-- **templates/projekt-index-template.md**: Ausgefülltes Beispiel
+- **.github/skills/local-rag-pipeline/SKILL.md**: Local RAG Pipeline Anleitung
 
 ### Für Agent-Entwicklung
 - **.github/skills/project-visitor/SKILL.md**: Workflow und Best Practices
 - **references/projekt-index-format.md**: Projekt-Index Format
-- **references/metadata-extraction.md**: Extraktions-Strategien
-- **references/document-ingestion.md**: Local RAG Integration
 
 ## 🔧 Workflows
 
@@ -257,44 +138,6 @@ Der Agent:
 
 Der Agent nutzt Local RAG für semantische Suche in allen ingestierten Dokumenten.
 
-## ⚙️ Konfiguration
-
-### Local RAG
-
-Edit `.env`:
-```bash
-# Basis-Verzeichnis für Dokumente
-BASE_DIR=/path/to/docbot/documents
-
-# Vektordatenbank-Pfad
-DB_PATH=./.rag/lancedb
-
-# Embedding-Modell
-MODEL_NAME=Xenova/all-MiniLM-L6-v2
-
-# Maximale Dateigröße (Bytes)
-MAX_FILE_SIZE=104857600
-```
-
-### VS Code MCP (Legacy)
-
-Das alte mcp-local-rag System ist deprecated. Nutze stattdessen das neue local-rag-pipeline Skill direkt.
-
-Falls du das alte System noch nutzt, füge zu `~/.vscode/mcp.json` hinzu:
-```json
-{
-  "mcpServers": {
-    "local-rag": {
-      "command": "npx",
-      "args": ["-y", "mcp-local-rag"],
-      "env": {
-        "BASE_DIR": "/path/to/docbot/documents"
-      }
-    }
-  }
-}
-```
-
 ## 🤝 Contributing
 
 Neue Agents oder Skills erstellen:
@@ -324,15 +167,10 @@ Neue Agents oder Skills erstellen:
 - ✅ **Lokal**: Alle Dokumente bleiben auf deinem Rechner
 - ✅ **Offline**: Nach Modell-Download keine Internet-Verbindung nötig
 - ✅ **Privat**: Keine Daten werden an externe APIs gesendet
-- ✅ **Sicher**: Nur Dokumente in `BASE_DIR` sind zugreifbar
 
 ## 📚 Weitere Ressourcen
 
 - [VS Code Custom Agents Dokumentation](https://code.visualstudio.com/docs/copilot/customization/custom-agents)
-- [Local RAG Pipeline Skill](../.github/skills/local-rag-pipeline/SKILL.md)
-- [Docling Dokumentation](https://ds4sd.github.io/docling/)
-- [ChromaDB Dokumentation](https://docs.trychroma.com/)
-- [MCP Protokoll](https://modelcontextprotocol.io/)
 
 ## 📄 Lizenz
 
