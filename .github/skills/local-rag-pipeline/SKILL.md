@@ -24,10 +24,45 @@ PDF/DOCX → Docling Parser → HybridChunker → Embeddings (GPU) → ChromaDB
 **Query Flow:**
 ```
 Query → Embedding → Vector Search (top-20) → Reranking (GPU) → Top-5 Results
-                                                                   ↓
-                                                          with page_no,
-                                                          headings, bbox
+                                                                    ↓
+                                                           with page_no,
+                                                           headings, bbox
 ```
+
+## Query Expansion
+
+**Automatische Expansion vor jeder Suche für bessere Retrieval-Ergebnisse.**
+
+**Prompt-Template (verwende exakt dieses Format):**
+```
+Du bist ein Suchexperte für Dokumentensuche.
+Generiere 4 alternative Suchanfragen für das Dokumentensystem.
+
+Original-Query: {query}
+
+Regeln:
+1. Füge Synonyme und verwandte Fachbegriffe hinzu
+2. Übersetze zwischen DE/EN wo sinnvoll
+3. Variiere die Formulierung (Frage vs. Statement)
+4. Gib NUR eine JSON-Liste zurück: ["query1", "query2", "query3", "query4"]
+
+Beispiel:
+- Input: "Zahlungsbedingungen"
+- Output: ["Zahlungsbedingungen", "payment terms", "Zahlungsmodalitäten", "billing conditions"]
+```
+
+**Workflow:**
+1. Original-Query vom Benutzer erhalten
+2. **Automatisch**: LLM mit obigem Prompt aufrufen
+3. 4 erweiterte Queries erhalten
+4. **Parallel**: Suche mit JEDER erweiterten Query ausführen
+5. **Merge**: Ergebnisse zusammenführen und deduplizieren
+6. Reranking auf vereinter Ergebnismenge
+
+**Wichtig:**
+- Expansion passiert **automatisch vor JEDER Suche**
+- **Kein Flag** nötig - immer aktiv
+- Verwende **exakt** das Prompt-Template oben
 
 ## 📁 Directory Structure
 
