@@ -1,4 +1,5 @@
 {
     "chat.useAgentsMdFile": true,
     "chat.useAgentSkills": true,
+    "peacock.color": "#5b1943",
 }
