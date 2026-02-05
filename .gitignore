@@ -9,3 +9,4 @@ documents/
 !documents/.gitkeep
 
 .rag/
+__pycache__/
