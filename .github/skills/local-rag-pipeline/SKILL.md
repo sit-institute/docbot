@@ -31,9 +31,8 @@ Query → Embedding → Vector Search (top-20) → Reranking (GPU) → Top-5 Res
 | Use Case | When to Use | Guide |
 |----------|-------------|-------|
 | **Document Indexing** | Index PDFs for semantic search, build RAG pipeline | [use-case-indexing.md](references/use-case-indexing.md) |
-| **Document Search** | Q&A system, two-stage retrieval with reranking | [use-case-searching.md](references/use-case-searching.md) |
+| **Document Search** | Q&A system, two-stage retrieval with reranking, query expansion | [use-case-searching.md](references/use-case-searching.md) |
 | **Collection Management** | List, inspect, or delete collections | [use-case-collection-management.md](references/use-case-collection-management.md) |
-| **Query Expansion** | Improve search recall with LLM-based expansion | [use-case-query-expansion.md](references/use-case-query-expansion.md) |
 
 ## Quick Start
 
