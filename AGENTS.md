@@ -3,13 +3,15 @@
 ## DocBot Knowledge
 
 ### For DocBot-specific knowledge
-- repository structure, project index format, conventions
 - Use `skill:docbot-knowledge`
+- repository structure, project index format, conventions
 
-### For seaching the documents in the repository
-- Use `skill:local-rag-pipeline` (if the documents are indexed in ChromaDB)
+### For seaching the documents
+- Use `skill:local-rag-pipeline`
 - scripts are in `.github/skills/local-rag-pipeline/scripts`
 
+### For searching the internet
+- Use `perplexity` tools
 
 ## Markdown Formatting
 
