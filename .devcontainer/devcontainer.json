@@ -10,6 +10,7 @@
     "hostRequirements": {
         "gpu": "optional"
     },
+    "postCreateCommand": "sudo apt-get update && sudo apt-get install -y libgl1-mesa-glx libglib2.0-0 && pip install -r .github/skills/local-rag-pipeline/scripts/requirements.txt",
     "customizations": {
         "vscode": {
             "extensions": [

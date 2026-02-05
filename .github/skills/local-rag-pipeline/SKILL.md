@@ -293,14 +293,14 @@ python scripts/setup_check.py
 
 ### Adjusting Chunk Size
 
-Edit `scripts/2_chunk_documents.py`:
-```python
-chunker = HybridChunker(
-    max_tokens=512,          # Reduce for smaller models
-    merge_list_items=True,   # Set False to separate list items
-    tokenizer="gpt-4"        # Tokenizer for counting
-)
-```
+ Edit `scripts/2_chunk_documents.py`:
+ ```python
+ chunker = HybridChunker(
+     max_tokens=512,          # Reduce for smaller models
+     merge_list_items=True,   # Set False to separate list items
+     tokenizer="cl100k_base"  # OpenAI-compatible tokenizer (GPT-4/GPT-3.5 standard)
+ )
+ ```
 
 ### Custom Metadata Filtering
 

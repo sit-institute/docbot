@@ -7,3 +7,5 @@ models/
 
 documents/
 !documents/.gitkeep
+
+.rag/
