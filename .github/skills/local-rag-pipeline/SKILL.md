@@ -28,11 +28,11 @@ Query → Embedding → Vector Search (top-20) → Reranking (GPU) → Top-5 Res
 
 ## Use Cases
 
-| Use Case | When to Use | Guide |
-|----------|-------------|-------|
-| **Document Indexing** | Index PDFs for semantic search, build RAG pipeline | [use-case-indexing.md](references/use-case-indexing.md) |
-| **Document Search** | Q&A system, two-stage retrieval with reranking, query expansion | [use-case-searching.md](references/use-case-searching.md) |
-| **Collection Management** | List, inspect, or delete collections | [use-case-collection-management.md](references/use-case-collection-management.md) |
+| Use Case                  | When to Use                                                     | Guide                                                                             |
+| ------------------------- | --------------------------------------------------------------- | --------------------------------------------------------------------------------- |
+| **Document Indexing**     | Index PDFs for semantic search, build RAG pipeline              | [use-case-indexing.md](references/use-case-indexing.md)                           |
+| **Document Search**       | Q&A system, two-stage retrieval with reranking, query expansion | [use-case-searching.md](references/use-case-searching.md)                         |
+| **Collection Management** | List, inspect, or delete collections                            | [use-case-collection-management.md](references/use-case-collection-management.md) |
 
 ## Quick Start
 
@@ -67,8 +67,6 @@ All artifacts under `.rag/`:
 - `.rag/embeddings/` - Vector embeddings
 - `.rag/chromadb/` - ChromaDB persistent storage
 
-Add `.rag/` to `.gitignore`.
-
 ## Collection Naming
 
 **CRITICAL:** No default collection name. Users MUST specify one.
@@ -101,9 +99,7 @@ python scripts/setup_check.py --install
 
 ## Reference Documentation
 
-| Topic | File |
-|-------|------|
+| Topic           | File                                                |
+| --------------- | --------------------------------------------------- |
 | Metadata Schema | [metadata_schema.md](references/metadata_schema.md) |
-| ChromaDB API | [chromadb_api.md](references/chromadb_api.md) |
-| Model Comparison | [model_comparison.md](references/model_comparison.md) |
-| Evaluation | See `.github/skills/local-rag-pipeline/scripts/eval/` |
+| ChromaDB API    | [chromadb_api.md](references/chromadb_api.md)       |
