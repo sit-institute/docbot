@@ -283,12 +283,21 @@ Two-stage retrieval: vector search + cross-encoder reranking.
 
 **Usage:**
 ```bash
-python scripts/5_search_documents.py <chroma_db_path> "<query>" --collection <name> [--top-k 5] [--rerank-candidates 20]
+python scripts/5_search_documents.py <chroma_db_path> "<query>" --collection <name> [--top-k 5] [--rerank-candidates 20] [--filter-filename <filename>]
 ```
 
 **⚠️ REQUIRED: `--collection <name>` must be explicitly specified. No default exists.**
 
 **Before running: Ask user which collection to search in.**
+
+**Examples:**
+```bash
+# Basic search
+python scripts/5_search_documents.py .rag/chromadb/ "payment terms" --collection vw_reports
+
+# Search with filename filter
+python scripts/5_search_documents.py .rag/chromadb/ "Fördergeld" --collection vw_reports --filter-filename antragstellung.pdf
+```
 
 **Process:**
 1. **Stage 1**: Vector search retrieves top-20 candidates (fast, ~10-50ms)
@@ -328,6 +337,24 @@ python scripts/6_collection_manager.py .rag/chromadb/ --info <collection_name>
 
 # Delete collection
 python scripts/6_collection_manager.py .rag/chromadb/ --delete <collection_name>
+
+# Delete specific documents by ID
+python scripts/6_collection_manager.py .rag/chromadb/ --delete-ids <id1> <id2> ... --collection <name>
+
+# Delete all documents from a source file
+python scripts/6_collection_manager.py .rag/chromadb/ --delete-source <filename> --collection <name>
+```
+
+**Examples:**
+```bash
+# Delete collection
+python scripts/6_collection_manager.py .rag/chromadb/ --delete old_collection
+
+# Delete documents by ID (requires --collection)
+python scripts/6_collection_manager.py .rag/chromadb/ --delete-ids doc_001 doc_002 doc_003 --collection vw_reports
+
+# Delete all documents from a source file (requires --collection)
+python scripts/6_collection_manager.py .rag/chromadb/ --delete-source report_2024.pdf --collection vw_reports
 ```
 
 ## Setup and Installation

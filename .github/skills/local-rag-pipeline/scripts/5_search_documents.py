@@ -28,6 +28,7 @@ def search_documents(
     top_k: int = 5,
     rerank_candidates: int = 20,
     reranker_model: str = "BAAI/bge-reranker-v2-m3",
+    filter_filename: str = None,
 ):
     """
     Search documents with two-stage retrieval.
@@ -81,13 +82,24 @@ def search_documents(
     print(
         f"\n[Stage 1] Vector search (retrieving top-{rerank_candidates} candidates)..."
     )
-    results = collection.query(
-        query_embeddings=query_embedding.cpu().numpy().tolist(),
-        n_results=min(rerank_candidates, collection.count()),
-    )
+
+    query_params = {
+        "query_embeddings": query_embedding.cpu().numpy().tolist(),
+        "n_results": min(rerank_candidates, collection.count()),
+    }
+
+    if filter_filename:
+        query_params["where"] = {"filename": {"$eq": filter_filename}}
+        print(f"Filtering by filename: {filter_filename}")
+
+    results = collection.query(**query_params)
 
     if not results["documents"][0]:
-        print("No results found")
+        print(
+            f"No documents found for filename: {filter_filename}"
+            if filter_filename
+            else "No results found"
+        )
         return
 
     candidates = results["documents"][0]
@@ -158,6 +170,10 @@ def main():
         default="BAAI/bge-reranker-v2-m3",
         help="Reranker model (default: BAAI/bge-reranker-v2-m3)",
     )
+    parser.add_argument(
+        "--filter-filename",
+        help="Filter results by source filename",
+    )
 
     args = parser.parse_args()
 
@@ -168,6 +184,7 @@ def main():
         args.top_k,
         args.rerank_candidates,
         args.reranker,
+        args.filter_filename,
     )
 
 
