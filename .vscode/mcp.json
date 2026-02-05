@@ -1,15 +1,5 @@
 {
     "servers": {
-        "local-rag": {
-            "command": "npx",
-            "args": [
-                "-y",
-                "mcp-local-rag"
-            ],
-            "env": {
-                "BASE_DIR": "${workspaceFolder}/documents"
-            }
-        },
         "perplexity": {
             "command": "npx",
             "args": [

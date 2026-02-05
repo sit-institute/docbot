@@ -11,7 +11,7 @@ Alle Dokumente müssen innerhalb des konfigurierten `BASE_DIR` liegen.
 
 **Standard-Konfiguration für DocBot**:
 ```
-BASE_DIR=/home/peter/Dokumente/Repositories/docbot/documents
+BASE_DIR=./documents
 ```
 
 **Struktur**:
@@ -34,22 +34,22 @@ documents/
 
 ### ✅ Vollständig unterstützt
 
-| Format | Erkennung | Hinweise |
-|--------|-----------|----------|
-| **PDF** | `.pdf` | Via pdfjs-dist, Text-Layer erforderlich |
-| **DOCX** | `.docx` | Via mammoth, moderne Word-Dokumente |
-| **TXT** | `.txt` | Plain text, alle Encodings |
-| **Markdown** | `.md`, `.markdown` | Native Unterstützung |
+| Format       | Erkennung          | Hinweise                                |
+| ------------ | ------------------ | --------------------------------------- |
+| **PDF**      | `.pdf`             | Via pdfjs-dist, Text-Layer erforderlich |
+| **DOCX**     | `.docx`            | Via mammoth, moderne Word-Dokumente     |
+| **TXT**      | `.txt`             | Plain text, alle Encodings              |
+| **Markdown** | `.md`, `.markdown` | Native Unterstützung                    |
 
 ### ❌ Nicht unterstützt
 
-| Format | Warum nicht | Alternative |
-|--------|-------------|-------------|
-| **Excel** | `.xlsx`, `.xls` | Keine automatische Extraktion | Manuelle Konvertierung zu CSV oder PDF |
-| **PowerPoint** | `.pptx`, `.ppt` | Keine Text-Extraktion | Export als PDF |
-| **Bilder** | `.jpg`, `.png`, `.gif` | Kein OCR verfügbar | OCR extern durchführen |
-| **Archive** | `.zip`, `.tar`, `.gz` | Nicht entpackt | Manuell entpacken |
-| **RTF** | `.rtf` | Nicht implementiert | Konvertierung zu DOCX |
+| Format         | Warum nicht            | Alternative                   |
+| -------------- | ---------------------- | ----------------------------- |
+| **Excel**      | `.xlsx`, `.xls`        | Keine automatische Extraktion | Manuelle Konvertierung zu CSV oder PDF |
+| **PowerPoint** | `.pptx`, `.ppt`        | Keine Text-Extraktion         | Export als PDF                         |
+| **Bilder**     | `.jpg`, `.png`, `.gif` | Kein OCR verfügbar            | OCR extern durchführen                 |
+| **Archive**    | `.zip`, `.tar`, `.gz`  | Nicht entpackt                | Manuell entpacken                      |
+| **RTF**        | `.rtf`                 | Nicht implementiert           | Konvertierung zu DOCX                  |
 
 ## Ingestion-Workflow
 
